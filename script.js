@@ -17,6 +17,7 @@ function Book(title, author, pages, read) {
 
 const bookForm = document.getElementById('addBook');
 const bookModal = document.getElementById('bookModal');
+
 const myLibrary = [];
 let bookId = 0;
 
@@ -24,13 +25,18 @@ addBookToLibrary(new Book('Elon Musk', 'Walter Issacson', 688, false));
 addBookToLibrary(new Book('Think Straight: Change Your Thoughts, Change Your Life', 'Darius Foroux', 100, true));
 addBookToLibrary(new Book("Can't Hurt Me: Master Your Mind and Defy the Odds", 'David Goggins', 364, false));
 
-bookForm.addEventListener('submit', () => {
+bookForm.addEventListener('submit', (e) => {
 	let booktitle = document.getElementById('booktitle').value;
 	let bookauthor = document.getElementById('bookauthor').value;
 	let bookpages = document.getElementById('bookpages').value;
 	let bookhaveread = document.getElementById('bookhaveread').checked;
   addBookToLibrary(new Book(booktitle, bookauthor, bookpages, bookhaveread));
+  $('#bookModal').modal('hide');
 });
+
+bookModal.addEventListener('show.bs.modal', () => {
+
+})
 
 function addBookToLibrary(newBook) {
 	myLibrary.push(newBook);
@@ -61,19 +67,6 @@ function addBookToLibrary(newBook) {
 	pages.classList.add('card-text');
 	pages.innerHTML = `${newBook.pages} pages`;
 	bookCardBody.appendChild(pages);
-
-	// let haveReadInput = document.createElement("input");
-	// haveReadInput.type = "checkbox";
-	// haveReadInput.classList.add('btn-check');
-	// haveReadInput.setAttribute("id", `${newBook.id}`);
-	// bookCardBody.appendChild(haveReadInput);
-
-	// let haveReadLabel = document.createElement("label");
-	// haveReadLabel.classList.add('btn');
-	// haveReadLabel.classList.add('btn-outline-primary');
-	// haveReadLabel.setAttribute('for', `${newBook.id}`);
-	// haveReadLabel.innerHTML = 'Read';
-	// bookCardBody.appendChild(haveReadLabel);
 
 	let haveRead = document.createElement('button');
 	haveRead.setAttribute('type', 'button');
