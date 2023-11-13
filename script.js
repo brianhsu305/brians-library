@@ -32,6 +32,7 @@ bookForm.addEventListener('submit', (e) => {
 	let bookhaveread = document.getElementById('bookhaveread').checked;
   addBookToLibrary(new Book(booktitle, bookauthor, bookpages, bookhaveread));
   $('#bookModal').modal('hide');
+  bookForm.reset();
 });
 
 bookModal.addEventListener('show.bs.modal', () => {
