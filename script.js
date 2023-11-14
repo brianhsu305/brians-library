@@ -1,89 +1,128 @@
-function Book(title, author, pages, read) {
-	this.id = bookId;
+function Book(title, author, pages, isRead) {
 	this.title = title;
 	this.author = author;
 	this.pages = pages;
-	this.read = read;
-	this.info = function () {
-		return {
-			id,
-			title,
-			author,
-			pages,
-			read,
-		};
-	};
+	this.isRead = isRead;
 }
 
+function Library() {
+	this.books = [];
+
+	this.addBook = (book) => {
+		this.books.push(book);
+	};
+	this.removeBook = (title) => {
+		for (let i = 0; i < this.books.length; i++) {
+			if (this.books[i].title === title) {
+				this.books.splice(i, 1);
+			}
+		}
+	};
+	this.getBook = (title) => {
+		for (let i = 0; i < this.books.length; i++) {
+      if (this.books[i].title === title) return this.books[i];
+    }
+  }
+}
+
+const books = document.getElementById('books');
 const bookForm = document.getElementById('addBook');
 const bookModal = document.getElementById('bookModal');
 
-const myLibrary = [];
-let bookId = 0;
+const myLibrary = new Library();
 
-addBookToLibrary(new Book('Elon Musk', 'Walter Issacson', 688, false));
-addBookToLibrary(new Book('Think Straight: Change Your Thoughts, Change Your Life', 'Darius Foroux', 100, true));
-addBookToLibrary(new Book("Can't Hurt Me: Master Your Mind and Defy the Odds", 'David Goggins', 364, false));
 
-bookForm.addEventListener('submit', (e) => {
-	let booktitle = document.getElementById('booktitle').value;
-	let bookauthor = document.getElementById('bookauthor').value;
-	let bookpages = document.getElementById('bookpages').value;
-	let bookhaveread = document.getElementById('bookhaveread').checked;
-  addBookToLibrary(new Book(booktitle, bookauthor, bookpages, bookhaveread));
-  $('#bookModal').modal('hide');
-  bookForm.reset();
-});
 
-bookModal.addEventListener('show.bs.modal', () => {
+bookForm.onsubmit = (e) => {
+  e.preventDefault();
+	addBookToLibrary();
+	$('#bookModal').modal('hide');
+	bookForm.reset();
+};
 
-})
-
-function addBookToLibrary(newBook) {
-	myLibrary.push(newBook);
-	bookId++;
-
-	// HTML stuff
-	let bookCard = document.createElement('div');
-	bookCard.style.width = '15rem';
-	bookCard.classList.add('card');
-	bookCard.classList.add('m-2');
-
-	let bookCardBody = document.createElement('div');
-	bookCardBody.classList.add('card-body');
-
-	let title = document.createElement('h5');
-	title.classList.add('card-title');
-	title.innerHTML = newBook.title;
-	bookCardBody.appendChild(title);
-
-	let author = document.createElement('h6');
-	author.classList.add('card-subtitle');
-	author.classList.add('mb-2');
-	author.classList.add('text-body-secondary');
-	author.innerHTML = newBook.author;
-	bookCardBody.appendChild(author);
-
-	let pages = document.createElement('p');
-	pages.classList.add('card-text');
-	pages.innerHTML = `${newBook.pages} pages`;
-	bookCardBody.appendChild(pages);
-
-	let haveRead = document.createElement('button');
-	haveRead.setAttribute('type', 'button');
-	haveRead.setAttribute('data-bs-toggle', 'button');
-	haveRead.classList.add('btn');
-	haveRead.classList.add('btn-outline-primary');
-
-	if (newBook.read) {
-		haveRead.setAttribute('aria-pressed', 'true');
-		haveRead.classList.add('active');
-	}
-	haveRead.innerHTML = 'Read';
-	bookCardBody.appendChild(haveRead);
-
-	bookCard.append(bookCardBody);
-
-	let books = document.getElementById('books');
-	books.appendChild(bookCard);
+function getBookFromInput() {
+	const title = document.getElementById('booktitle').value;
+	const author = document.getElementById('bookauthor').value;
+	const pages = document.getElementById('bookpages').value;
+	const isRead = document.getElementById('bookhaveread').checked;
+	return new Book(title, author, pages, isRead);
 }
+
+function addBookToLibrary() {
+	myLibrary.addBook(getBookFromInput());
+  updateBooks();
+}
+
+const readToggle  = (e) => {
+  const title = e.target.parentNode.firstChild.textContent;
+  const book = myLibrary.getBook(title);
+  book.isRead = !book.isRead;
+  updateBooks();
+}
+
+const removeBook = (e) => {
+  const title = e.target.parentNode.firstChild.textContent;
+  const book = myLibrary.removeBook(title);
+  updateBooks();
+}
+
+function resetBooks() {
+  books.innerHTML = '';
+}
+
+function updateBooks() {
+  resetBooks();
+
+	myLibrary.books.forEach((book) => {
+		let bookCard = document.createElement('div');
+		let bookCardBody = document.createElement('div');
+		let title = document.createElement('h5');
+		let author = document.createElement('h6');
+		let pages = document.createElement('p');
+		let isRead = document.createElement('button');
+		let remove = document.createElement('button');
+		let books = document.getElementById('books');
+
+		bookCard.style.width = '15rem';
+		bookCard.classList.add('card');
+		bookCard.classList.add('m-2');
+		bookCardBody.classList.add('card-body');
+
+		title.classList.add('card-title');
+		author.classList.add('card-subtitle');
+		author.classList.add('mb-2');
+		author.classList.add('text-body-secondary');
+		pages.classList.add('card-text');
+		isRead.setAttribute('type', 'button');
+		isRead.setAttribute('data-bs-toggle', 'button');
+		isRead.classList.add('btn');
+    remove.classList.add('btn');
+		isRead.classList.add('btn-outline-primary');
+    remove.classList.add('btn-outline-primary');
+		if (book.isRead) {
+			isRead.classList.add('active');
+		}
+
+		title.textContent = book.title;
+		author.textContent = book.author;
+		pages.textContent = `${book.pages} pages`;
+		isRead.textContent = 'Read';
+		remove.textContent = 'Remove';
+
+    isRead.onclick = readToggle;
+    remove.onclick = removeBook;
+
+		bookCardBody.appendChild(title);
+		bookCardBody.appendChild(author);
+		bookCardBody.appendChild(pages);
+		bookCardBody.appendChild(isRead);
+		bookCardBody.appendChild(remove);
+		bookCard.append(bookCardBody);
+		books.appendChild(bookCard);
+	});
+}
+
+
+myLibrary.addBook(new Book('Think Straight: Change Your Thoughts, Change Your Life', 'Darius Foroux', 100, true));
+myLibrary.addBook(new Book("Can't Hurt Me: Master Your Mind and Defy the Odds", 'David Goggins', 364, false));
+updateBooks();
