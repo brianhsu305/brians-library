@@ -11,18 +11,18 @@ function Library() {
 	this.addBook = (book) => {
 		this.books.push(book);
 	};
+
 	this.removeBook = (title) => {
 		for (let i = 0; i < this.books.length; i++) {
-			if (this.books[i].title === title) {
-				this.books.splice(i, 1);
-			}
+			if (this.books[i].title === title) this.books.splice(i, 1);
 		}
 	};
+
 	this.getBook = (title) => {
 		for (let i = 0; i < this.books.length; i++) {
-      if (this.books[i].title === title) return this.books[i];
-    }
-  }
+			if (this.books[i].title === title) return this.books[i];
+		}
+	};
 }
 
 const books = document.getElementById('books');
@@ -31,10 +31,8 @@ const bookModal = document.getElementById('bookModal');
 
 const myLibrary = new Library();
 
-
-
 bookForm.onsubmit = (e) => {
-  e.preventDefault();
+	e.preventDefault();
 	addBookToLibrary();
 	$('#bookModal').modal('hide');
 	bookForm.reset();
@@ -50,28 +48,28 @@ function getBookFromInput() {
 
 function addBookToLibrary() {
 	myLibrary.addBook(getBookFromInput());
-  updateBooks();
+	updateBooks();
 }
 
-const readToggle  = (e) => {
-  const title = e.target.parentNode.firstChild.textContent;
-  const book = myLibrary.getBook(title);
-  book.isRead = !book.isRead;
-  updateBooks();
-}
+const readToggle = (e) => {
+	const title = e.target.parentNode.firstChild.textContent;
+	const book = myLibrary.getBook(title);
+	book.isRead = !book.isRead;
+	updateBooks();
+};
 
 const removeBook = (e) => {
-  const title = e.target.parentNode.firstChild.textContent;
-  const book = myLibrary.removeBook(title);
-  updateBooks();
-}
+	const title = e.target.parentNode.firstChild.textContent;
+	myLibrary.removeBook(title);
+	updateBooks();
+};
 
 function resetBooks() {
-  books.innerHTML = '';
+	books.innerHTML = '';
 }
 
 function updateBooks() {
-  resetBooks();
+	resetBooks();
 
 	myLibrary.books.forEach((book) => {
 		let bookCard = document.createElement('div');
@@ -96,9 +94,9 @@ function updateBooks() {
 		isRead.setAttribute('type', 'button');
 		isRead.setAttribute('data-bs-toggle', 'button');
 		isRead.classList.add('btn');
-    remove.classList.add('btn');
+		remove.classList.add('btn');
 		isRead.classList.add('btn-outline-primary');
-    remove.classList.add('btn-outline-primary');
+		remove.classList.add('btn-outline-primary');
 		if (book.isRead) {
 			isRead.classList.add('active');
 		}
@@ -109,8 +107,8 @@ function updateBooks() {
 		isRead.textContent = 'Read';
 		remove.textContent = 'Remove';
 
-    isRead.onclick = readToggle;
-    remove.onclick = removeBook;
+		isRead.onclick = readToggle;
+		remove.onclick = removeBook;
 
 		bookCardBody.appendChild(title);
 		bookCardBody.appendChild(author);
@@ -121,8 +119,3 @@ function updateBooks() {
 		books.appendChild(bookCard);
 	});
 }
-
-
-myLibrary.addBook(new Book('Think Straight: Change Your Thoughts, Change Your Life', 'Darius Foroux', 100, true));
-myLibrary.addBook(new Book("Can't Hurt Me: Master Your Mind and Defy the Odds", 'David Goggins', 364, false));
-updateBooks();
