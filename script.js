@@ -36,39 +36,36 @@ bookForm.onsubmit = (e) => {
 	addBookToLibrary();
 	$('#bookModal').modal('hide');
 	bookForm.reset();
+	return false;
 };
 
-function getBookFromInput() {
+const addBookToLibrary = () => {
+	myLibrary.addBook(getBookFromInput());
+	updateBooks();
+};
+
+const getBookFromInput = () => {
 	const title = document.getElementById('booktitle').value;
 	const author = document.getElementById('bookauthor').value;
 	const pages = document.getElementById('bookpages').value;
 	const isRead = document.getElementById('bookhaveread').checked;
 	return new Book(title, author, pages, isRead);
-}
-
-function addBookToLibrary() {
-	myLibrary.addBook(getBookFromInput());
-	updateBooks();
-}
+};
 
 const readToggle = (e) => {
-	const title = e.target.parentNode.firstChild.textContent;
+	const title = e.target.parentNode.parentNode.firstChild.textContent;
 	const book = myLibrary.getBook(title);
 	book.isRead = !book.isRead;
 	updateBooks();
 };
 
 const removeBook = (e) => {
-	const title = e.target.parentNode.firstChild.textContent;
+	const title = e.target.parentNode.parentNode.firstChild.textContent;
 	myLibrary.removeBook(title);
 	updateBooks();
 };
 
-function resetBooks() {
-	books.innerHTML = '';
-}
-
-function updateBooks() {
+const updateBooks = () => {
 	resetBooks();
 
 	myLibrary.books.forEach((book) => {
@@ -77,6 +74,7 @@ function updateBooks() {
 		let title = document.createElement('h5');
 		let author = document.createElement('h6');
 		let pages = document.createElement('p');
+		let buttonGroup = document.createElement('div');
 		let isRead = document.createElement('button');
 		let remove = document.createElement('button');
 		let books = document.getElementById('books');
@@ -85,20 +83,29 @@ function updateBooks() {
 		bookCard.classList.add('card');
 		bookCard.classList.add('m-2');
 		bookCardBody.classList.add('card-body');
+		bookCardBody.classList.add('text-center');
+		bookCardBody.classList.add('d-flex');
+		bookCardBody.classList.add('flex-column');
 
 		title.classList.add('card-title');
 		author.classList.add('card-subtitle');
 		author.classList.add('mb-2');
 		author.classList.add('text-body-secondary');
 		pages.classList.add('card-text');
+		buttonGroup.classList.add('d-flex');
+		buttonGroup.classList.add('justify-content-around');
+		buttonGroup.classList.add('mt-auto');
+		isRead.classList.add('btn');
+		isRead.classList.add('btn-outline-success');
 		isRead.setAttribute('type', 'button');
 		isRead.setAttribute('data-bs-toggle', 'button');
-		isRead.classList.add('btn');
 		remove.classList.add('btn');
-		isRead.classList.add('btn-outline-primary');
-		remove.classList.add('btn-outline-primary');
+		remove.classList.add('btn-outline-danger');
+		remove.setAttribute('type', 'button');
+		remove.setAttribute('data-bs-toggle', 'button');
 		if (book.isRead) {
 			isRead.classList.add('active');
+			isRead.setAttribute('aria-pressed', 'true');
 		}
 
 		title.textContent = book.title;
@@ -113,9 +120,14 @@ function updateBooks() {
 		bookCardBody.appendChild(title);
 		bookCardBody.appendChild(author);
 		bookCardBody.appendChild(pages);
-		bookCardBody.appendChild(isRead);
-		bookCardBody.appendChild(remove);
+		buttonGroup.appendChild(isRead);
+		buttonGroup.appendChild(remove);
+		bookCardBody.appendChild(buttonGroup);
 		bookCard.append(bookCardBody);
 		books.appendChild(bookCard);
 	});
-}
+};
+
+const resetBooks = () => {
+	books.innerHTML = '';
+};
